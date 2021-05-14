@@ -1,6 +1,9 @@
 extends: spectral:oas
 
 rules:
+  info-contact: off
+  operation-operationId: off
+
   api-root:
     description: API MUST have a root path defined (`/`)
     severity: error
