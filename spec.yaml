@@ -25,7 +25,7 @@ rules:
     then:
       function: pattern
       functionOptions:
-        match: "^(\/|[a-z0-9-.]+|{[a-zA-Z0-9_]+})+$"
+        match: '^(\/|[a-z0-9-.]+|{[a-zA-Z0-9_]+})+$'
 
   operation-short-summary: 
     description: Operation summary should be short and sweet, no full stops, and less than 20 characters
@@ -36,7 +36,7 @@ rules:
       - field: summary
         function: pattern
         functionOptions:
-          notMatch: "\\."
+          notMatch: '\\.'
       - field: summary
         function: length
         functionOptions:
@@ -62,7 +62,7 @@ rules:
     then:
       function: pattern
       functionOptions:
-        match: "^([0-9]+.[0-9]+.[0-9]+)$"
+        match: '^([0-9]+.[0-9]+.[0-9]+)$'
 
   no-x-headers:
     description: Header MUST not be prefixed wit X- (https://tools.ietf.org/html/rfc6648)
@@ -82,7 +82,7 @@ rules:
     then: 
       function: pattern
       functionOptions:
-        match: "/^([A-Z][a-z0-9]-)*([A-Z][a-z0-9])+/"
+        match: '/^([A-Z][a-z0-9]-)*([A-Z][a-z0-9])+/'
 
   request-get-no-body:
     description: A GET request MUST NOT accept a body parameter
@@ -91,4 +91,4 @@ rules:
     then:
       function: pattern
       functionOptions:
-        notMatch: "/^body$/"
+        notMatch: '/^body$/'
