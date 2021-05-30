@@ -33,10 +33,10 @@ rules:
       functionOptions:
         match: "^\/([a-z0-9]+(-[a-z0-9]+)*)?(\/[a-z0-9]+(-[a-z0-9]+)*|\/{.+})*$"
 
-  path-parameters-camelCase-alphanumeric:
+  path-parameters-camelCase:
     description: Path parameters MUST be camelCase
-    severity: warn
     recommended: true
+    severity: error
     message: "{{property}} path parameter is not camelCase: {{error}}"
     given: $..parameters[?(@.in == 'path')].name
     then:
@@ -51,12 +51,10 @@ rules:
     given: $.paths.*[*]
     then:
       - field: summary
-        function: pattern
-        functionOptions:
-          notMatch: '\\.'
+        function: truthy
 
   operation-short-summary: 
-    description: Operation summary should be short and sweet, no full stops, and less than 20 characters
+    description: Operation summary should be short and sweet, no full stops, and less than 30 characters
     recommended: true
     severity: warn
     given: $.paths.*[*]
@@ -68,7 +66,7 @@ rules:
       - field: summary
         function: length
         functionOptions:
-          max: 20
+          max: 30
 
   schema-names-pascal-case:
     description: Schema names MUST be written in PascalCase
