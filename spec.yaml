@@ -129,3 +129,16 @@ rules:
     given: $.paths.[*].requestBody.content[?(@property.indexOf('json') === -1)]^
     then:
       function: falsy
+  
+  response-success-media-type:
+    description: All success responses MUST be of media type `application/hal+json` or `application/problem+json`
+    recommended: true
+    severity: error
+    message: "Response documents MUST be of application/hal+json or application/problem+json media types: {{error}}"
+    given: $.paths..responses[?( @property == 200 )].content[*]~
+    then:
+      function: enumeration
+      functionOptions:
+        values:
+          - application/hal+json
+          - application/problem+json
