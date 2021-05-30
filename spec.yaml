@@ -5,7 +5,7 @@ rules:
   operation-operationId: off
 
   api-root:
-    description: API MUST have a root path defined (`/`)
+    description: API SHOULD have a root path defined (`/`)
     recommended: true
     severity: warn
     given: $.paths
@@ -45,7 +45,7 @@ rules:
         match: "^[a-z][a-zA-Z0-9]+$"
 
   operation-summary: 
-    description: Operation summary should exist
+    description: Operation summary MUST exist
     recommended: true
     severity: error
     given: $.paths.*[*]
@@ -54,7 +54,7 @@ rules:
         function: truthy
 
   operation-short-summary: 
-    description: Operation summary should be short and sweet, no full stops, and less than 30 characters
+    description: Operation summary SHOULD be short and sweet, no full stops, less than 30 characters
     recommended: true
     severity: warn
     given: $.paths.*[*]
@@ -79,7 +79,7 @@ rules:
         match: '^[A-Z][a-zA-Z0-9]*$'
 
   semver:
-    description: Schema names MUST be written in PascalCase
+    description: API version MUST follow semantic versioning
     recommended: true
     severity: error
     message: 'Please follow semantic versioning. {{value}} is not a valid version.'
@@ -120,3 +120,12 @@ rules:
       function: pattern
       functionOptions:
         notMatch: '/^body$/'
+
+  request-support-json:
+    description: Every request MUST support `application/json` media type
+    recommended: true
+    severity: error
+    message: "{{description}}: {{error}}"
+    given: $.paths.[*].requestBody.content[?(@property.indexOf('json') === -1)]^
+    then:
+      function: falsy
