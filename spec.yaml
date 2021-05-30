@@ -6,7 +6,8 @@ rules:
 
   api-root:
     description: API MUST have a root path defined (`/`)
-    severity: error
+    recommended: true
+    severity: warn
     given: $.paths
     then:
       field: /
@@ -14,6 +15,7 @@ rules:
  
   api-root-get:
     description: Root path MUST have a GET defined, otherwise people won't know how to get it
+    recommended: true
     severity: error
     given: $.paths[/]
     then:
@@ -21,20 +23,43 @@ rules:
       function: truthy
 
   paths-kebab-case:
-    description: Paths MUST be kebab-case.
+    description: Paths MUST be kebab-case
+    recommended: true
     message: '{{property}} should be kebab-case'
-    severity: warn
+    severity: error
     given: $.paths[*]~
     then:
       function: pattern
       functionOptions:
-        match: '^(\/|[a-z0-9-.]+|{[a-zA-Z0-9_]+})+$'
+        match: "^\/([a-z0-9]+(-[a-z0-9]+)*)?(\/[a-z0-9]+(-[a-z0-9]+)*|\/{.+})*$"
+
+  path-parameters-camelCase-alphanumeric:
+    description: Path parameters MUST be camelCase
+    severity: warn
+    recommended: true
+    message: "{{property}} path parameter is not camelCase: {{error}}"
+    given: $..parameters[?(@.in == 'path')].name
+    then:
+      function: pattern
+      functionOptions:
+        match: "^[a-z][a-zA-Z0-9]+$"
+
+  operation-summary: 
+    description: Operation summary should exist
+    recommended: true
+    severity: error
+    given: $.paths.*[*]
+    then:
+      - field: summary
+        function: pattern
+        functionOptions:
+          notMatch: '\\.'
 
   operation-short-summary: 
     description: Operation summary should be short and sweet, no full stops, and less than 20 characters
     recommended: true
-    type: style
-    given: $.paths.*[?( @property === 'get' || @property === 'put' || @property === 'post' || @property === 'delete' || @property === 'options' || @property === 'head' || @property === 'patch' || @property === 'trace' )]
+    severity: warn
+    given: $.paths.*[*]
     then:
       - field: summary
         function: pattern
@@ -47,9 +72,8 @@ rules:
 
   schema-names-pascal-case:
     description: Schema names MUST be written in PascalCase
-    message: '{{property}} is not PascalCase: {{error}}'
     recommended: true
-    type: style
+    message: '{{property}} is not PascalCase: {{error}}'
     given: '$.components.schemas.*~'
     then:
       function: pattern
@@ -58,8 +82,8 @@ rules:
 
   semver:
     description: Schema names MUST be written in PascalCase
-    severity: error
     recommended: true
+    severity: error
     message: 'Please follow semantic versioning. {{value}} is not a valid version.'
     given: $.info.version
     then:
@@ -69,6 +93,8 @@ rules:
 
   no-x-headers:
     description: Header MUST not be prefixed wit X- (https://tools.ietf.org/html/rfc6648)
+    recommended: true
+    severity: warn
     message: "Headers MUST not be prefixed with X-. Please find a new name for {{property}}"
     given: $..parameters.[?(@.in === 'header')].name
     then:
@@ -78,10 +104,10 @@ rules:
 
   headers-hyphenated-pascal-case:
     description: All HTTP headers MUST use Hyphenated-Pascal-Case notation
-    message: "'HTTP' headers MUST follow 'Hyphenated-Pascal-Case' notation"
+    recommended: true
     severity: error
+    message: "'HTTP' headers MUST follow 'Hyphenated-Pascal-Case' notation"
     given: $..parameters[?(@.in == 'header')].name
-    type: style
     then: 
       function: pattern
       functionOptions:
@@ -89,6 +115,7 @@ rules:
 
   request-get-no-body:
     description: A GET request MUST NOT accept a body parameter
+    recommended: true
     severity: error
     given: $.paths..get.parameters..in
     then:
